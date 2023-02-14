@@ -12,13 +12,15 @@ class ImagesController extends BaseController {
       const id = req.params.id;
     
       if (req.user!=null) {
-        const result = await imageService.getImage(id);
+        const result = await imageService.getImage(id,req.user.id);
         if (result===undefined) {
           throw new HttpError("Image not found", 404);
           
           
         }
-        console.log(result);
+        if (result instanceof HttpError) {
+          throw result;
+        }
         
         this.responseHandler(res, result, 200);
       }else{

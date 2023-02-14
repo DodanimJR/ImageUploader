@@ -1,5 +1,5 @@
 import client from "../database/client";
-import { CustomError } from "../types/custom.error";
+import { CustomError, HttpError } from "../types/custom.error";
 
 class ImageService {
   getMessage() {
@@ -18,14 +18,18 @@ class ImageService {
     }
 
   }
-  async getImage(id: string) {
+  async getImage(id: string, userId: number) {
     try {
       const image = await client.image.findUnique({
         where: {
           uuid: id,
         },
       });
-      return image?.url;
+      if (image?.userId === userId) {
+        return image?.url;
+      } else {
+        return new HttpError("Image is not yours", 401);
+      }
     } catch (error) {
       return new CustomError("Error getting image");
     }
