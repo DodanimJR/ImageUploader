@@ -21,7 +21,7 @@ model User {
 
 model Image {
   id        String  @id @default(uuid()) 
-  name      String
+  uuid      String  @unique
   url       String
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
