@@ -24,6 +24,8 @@ export class BaseController {
     if (error instanceof HttpError) {
       return this.responseHandler(res, error.message, error.status);
     } else {
+      console.log(error);
+      
       return this.responseHandler(res, { error: error }, 500);
     }
   }
