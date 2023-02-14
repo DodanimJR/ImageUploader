@@ -1,22 +1,31 @@
 import { Request, Response } from "express";
 import { BaseController } from "../types/base.controller";
 import imageService from "../services/image.service";
-import {isUuid} from "uuidv4";
+import { HttpError } from "../types/custom.error";
 
 
 
 
 class ImagesController extends BaseController {
   async getImage(req: Request | any, res: Response) {
-    const id = req.params.id;
+    try {
+      const id = req.params.id;
     
-    if (req.user!=null) {
-      const result = await imageService.getImage(id);
-      console.log(result);
-      
-      this.responseHandler(res, result, 200);
-    }else{
-      this.responseHandler(res, {message:"This image doesn't belong to you"}, 401);
+      if (req.user!=null) {
+        const result = await imageService.getImage(id);
+        if (result===undefined) {
+          throw new HttpError("Image not found", 404);
+          
+          
+        }
+        console.log(result);
+        
+        this.responseHandler(res, result, 200);
+      }else{
+        this.responseHandler(res, {message:"This image doesn't belong to you"}, 401);
+      }
+    } catch (error) {
+      this.errorHandler(res, error);
     }
   }
   async uploadImage(req: Request | any, res: Response) {
